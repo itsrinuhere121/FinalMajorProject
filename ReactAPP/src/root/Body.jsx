@@ -17,11 +17,13 @@ export default function Body(props){
   const ip="http://127.0.0.1:8080";
  const[trendData,settrendData]= useState([]);
  const[trendsKeyList,settrendsKeyList]=useState([]);
+ const[pinPreview,setpinPreview]=useState(false);
+ const[pin,setPin]=useState([]);
  useEffect(()=>{
    axios.get(ip+"/trends").then((response)=>{
     const data = response.data;
     settrendData(data.reverse());
-console.log(response.data);
+    //console.log(response.data);
   }).catch((error)=>{
     console.log(error);
   })
@@ -57,6 +59,7 @@ console.log(response.data);
                   console.log("Clicked item is "+item.matchedwords.slice(2,-1))
                   axios.get(ip+"/trend/"+item.matchedwords.slice(2,-1)).then((response)=>{
                     settrendsKeyList(response.data);
+                    console.log("END POINT : trend/hash",response.data);
                     setlisttrends(true);
                   }).catch((error)=>{
                     console.log(error);
@@ -149,12 +152,38 @@ A vibrant student community provides a safe space for students to raise and disc
             return <>
            <Typography>{index} : {val.title}</Typography>
             <Button onClick={
-              console.log("view alert")
+              async()=>{
+               await axios.get(ip+"/alert/"+val.alertId).then((response)=>{
+                  
+                  if(response.status===200){
+                    setPin(response.data);
+                    console.log(response.data);
+                    setpinPreview(true);
+                  }
+                }).catch((error)=>{
+                  console.log("Error while getting alert",error);
+                })
+      
+              }
             }> View Pin</Button>
            
         
           </>
         })}
+      </DialogContent>
+    </Dialog>
+    <Dialog open={pinPreview}onClose={()=>{
+      setpinPreview(false);
+    }}>
+      <DialogTitle>Preview pin</DialogTitle>
+      <DialogContent>         
+            <Typography>{pin.title}</Typography>
+            <Typography>{pin.description}</Typography>
+            <Typography>{pin.links}</Typography>
+            <Typography>Posted at {pin.created}</Typography>
+           
+      
+
       </DialogContent>
     </Dialog>
     </>

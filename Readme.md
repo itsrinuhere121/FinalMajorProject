@@ -1,7 +1,7 @@
 # Spring Api will call and generate auto code in web app
 
-
-# Port
+# How to run this application
+## Step 1  Download Docker
 ```
-3000
+download docker from 
 ```
